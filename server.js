@@ -195,22 +195,45 @@ app.get('/api/ticket/status/:ticket_number', (req, res) => {
 // Update Rescuer Location
 app.post('/api/rescuer/location', (req, res) => {
     const { rescuerId, lat, lon } = req.body;
-    db.run("UPDATE rescuers SET last_lat = ?, last_lon = ? WHERE id = ?", [lat, lon, rescuerId], (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ success: true });
+    
+    // Check if rescuer has an active dispatched ticket
+    const checkMission = "SELECT id FROM tickets WHERE rescuer_id = ? AND status = 'DISPATCHED'";
+    
+    db.get(checkMission, [rescuerId], (err, ticket) => {
+        let newStatus = ticket ? 'responding' : 'available';
+        
+        const sql = `UPDATE rescuers SET last_lat = ?, last_lon = ?, status = ? WHERE id = ?`;
+        db.run(sql, [lat, lon, newStatus, rescuerId], (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ success: true, status: newStatus });
+        });
     });
 });
 
 // Rescuer Login
 app.post('/api/rescuer/login', (req, res) => {
     const { badge_id, password } = req.body;
-    db.get("SELECT * FROM rescuers WHERE badge_id = ?", [badge_id], async (err, rescuer) => {
-        if (err || !rescuer) return res.status(401).json({ error: "Invalid Credentials" });
+    const sql = "SELECT * FROM rescuers WHERE badge_id = ?";
+    
+    db.get(sql, [badge_id], async (err, rescuer) => {
+        if (err || !rescuer) return res.status(401).json({ error: "Auth Failed" });
         
         const match = await bcrypt.compare(password, rescuer.password);
-        if (!match) return res.status(401).json({ error: "Invalid Credentials" });
-        
-        res.json({ id: rescuer.id, name: rescuer.name, status: rescuer.status });
+        if (match) {
+            // Update status to 'available' (Logged In)
+            db.run("UPDATE rescuers SET status = 'available' WHERE id = ?", [rescuer.id]);
+            res.json(rescuer);
+        } else {
+            res.status(401).json({ error: "Auth Failed" });
+        }
+    });
+});
+
+app.post('/api/rescuer/logout', (req, res) => {
+    const { rescuerId } = req.body;
+    db.run("UPDATE rescuers SET status = 'off-duty' WHERE id = ?", [rescuerId], (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true });
     });
 });
 
