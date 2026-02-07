@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RescueLink | System Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #020617; color: #f8fafc; font-family: sans-serif; }
+        .grid-bg {
+            background-image: linear-gradient(to right, #1e293b 1px, transparent 1px),
+                              linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .glow { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+    </style>
+</head>
+<body class="grid-bg h-screen flex items-center justify-center p-6">
+
+    <div class="max-w-md w-full bg-slate-900/80 backdrop-blur-md border border-slate-800 p-8 rounded-3xl glow text-center">
+        <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full mb-6">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest">System Online</span>
+        </div>
+
+        <h1 class="text-2xl font-bold tracking-tight mb-2">RESCUELINK BACKEND</h1>
+        <p class="text-slate-400 text-sm mb-8">The dispatch engine is running and ready to process emergency signals.</p>
+
+        <div class="grid grid-cols-2 gap-4 text-left">
+            <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                <p class="text-[9px] uppercase text-slate-500 font-bold mb-1">Environment</p>
+                <p class="text-sm font-mono text-blue-400">Production</p>
+            </div>
+            <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                <p class="text-[9px] uppercase text-slate-500 font-bold mb-1">Port</p>
+                <p class="text-sm font-mono text-blue-400">Active</p>
+            </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-800/50">
+            <p class="text-[10px] text-slate-600 font-mono">Build ID: RL-2026-X1</p>
+        </div>
+    </div>
+
+</body>
+</html>
