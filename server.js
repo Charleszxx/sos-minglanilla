@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const cors = require('cors'); // 1. Import CORS
 
 const app = express();
 const db = new sqlite3.Database('./emergency.db');
@@ -14,6 +15,7 @@ const upload = multer({ storage: storage });
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use(cors());
 
 // --- DATABASE INITIALIZATION ---
 db.serialize(() => {
@@ -259,7 +261,8 @@ app.get('/api/chat/:ticket_number', (req, res) => {
     });
 });
 
-const PORT = 3000;
+// To this:
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`SOS Server running at http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
